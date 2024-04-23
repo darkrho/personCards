@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import axios from "axios";
+import { useState } from "react";
+import PersonCard from "./components/PersonCard";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false);
+  const [persons, setPersons] = useState([]);
+  const requestData = () => {
+    setIsLoading(true);
+    axios
+      .get("https://randomuser.me/api/?results=50")
+      .then((response) => {
+        setPersons(response.data.results);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="persons">
+      <h1>Person Cards</h1>
+      <button onClick={requestData}>get data</button>
+      {isLoading ? (
+        <h2>Loading</h2>
+      ) : (
+        persons.map((person, idx) => <PersonCard key={idx} person={person} />)
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
